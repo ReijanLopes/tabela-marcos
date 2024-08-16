@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="table-wrapper">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Valor da assinatura</th>
+              <th>Taxa de vendas (%)</th>
+              <th>Qtd. Assinates</th>
+              <th>Custo mensal</th>
+              <th>Min. assinantes</th>
+              <th>Receita bruta mensal</th>
+              <th>Receita liquida mensal</th>
+              <th class="trIcon">
+                <button class="button" onclick="addRow()">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    class="icon"
+                  >
+                    <path d="M5 12h14"></path>
+                    <path d="M12 5v14"></path>
+                  </svg>
+                </button>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <input
+                  class="input valor-assinatura"
+                  step="0.01"
+                  type="number"
+                  oninput="calcular(this)"
+                />
+              </td>
+              <td>
+                <input
+                  class="input taxa-venda"
+                  min="0"
+                  max="100"
+                  type="number"
+                  oninput="calcular(this)"
+                />
+              </td>
+              <td>
+                <input
+                  class="input qtd-assinantes"
+                  step="0.01"
+                  type="number"
+                  oninput="calcular(this)"
+                />
+              </td>
+              <td>
+                <input
+                  class="input custo-mensal"
+                  type="number"
+                  step="0.01"
+                  oninput="calcular(this)"
+                />
+              </td>
+              <td class="min-assinantes">0</td>
+              <td class="receita-bruta-mensal">0</td>
+              <td class="receita-liquida-mensal">0</td>
+              <td class="trIcon">
+                <button class="button" onclick="removeRow(this)">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    class="icon"
+                  >
+                    <path d="M3 6h18"></path>
+                    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                  </svg>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </body>
+  <script>
+    function removeRow(button) {
+      const row = button.closest("tr");
+      row.remove();
+    }
+
+    function calcular(element) {
+      const row = element.closest("tr");
+
+      const valorAssinatura =
+        parseFloat(row.querySelector(".valor-assinatura").value) || 0;
+      const taxaVenda = parseFloat(row.querySelector(".taxa-venda").value) || 0;
+      const qtdAssinantes =
+        parseInt(row.querySelector(".qtd-assinantes").value) || 0;
+      const custoMensal =
+        parseFloat(row.querySelector(".custo-mensal").value) || 0;
+
+      const minAssinantes =
+        Math.ceil(
+          custoMensal / (valorAssinatura - (taxaVenda / 100) * valorAssinatura)
+        ) || 0;
+      const receitaBrutaMensal =
+        qtdAssinantes *
+          (valorAssinatura - (taxaVenda / 100) * valorAssinatura) || 0;
+      const receitaLiquidaMensal = receitaBrutaMensal - custoMensal || 0;
+
+      row.querySelector(".min-assinantes").textContent = minAssinantes;
+      row.querySelector(".receita-bruta-mensal").textContent =
+        receitaBrutaMensal.toFixed(2);
+      row.querySelector(".receita-liquida-mensal").textContent =
+        receitaLiquidaMensal.toFixed(2);
+    }
+
+    function addRow() {
+      const tableBody = document.querySelector("table tbody");
+      const newRow = document.createElement("tr");
+
+      newRow.innerHTML = `
+        <td><input class="input valor-assinatura" step="0.01" type="number" oninput="calcular(this)" /></td>
+        <td><input class="input taxa-venda" min="0" max="100" type="number" oninput="calcular(this)" /></td>
+        <td><input class="input qtd-assinantes" step="0.01" type="number" oninput="calcular(this)" /></td>
+        <td><input class="input custo-mensal" type="number" step="0.01" oninput="calcular(this)" /></td>
+        <td class="min-assinantes">0</td>
+        <td class="receita-bruta-mensal">0</td>
+        <td class="receita-liquida-mensal">0</td>
+        <td class="trIcon">
+          <button class="button" onclick="removeRow(this)">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              class="icon"
+            >
+              <path d="M3 6h18"></path>
+              <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+              <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+            </svg>
+          </button>
+        </td>
+      `;
+
+      tableBody.appendChild(newRow);
+    }
+  </script>
+</html>
